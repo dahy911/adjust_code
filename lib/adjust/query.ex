@@ -57,22 +57,12 @@ defmodule Adjust.Query do
   end
 
   def copy() do
-    path = @path1 <> "\\data.csv"
+    path = @path1 <> "\\data_exp.csv"
     File.rm(path)
-
-    Adjust.RepoFoo.transaction(fn ->
-      from(
-        l in Adjust.Source,
-        select: %{a: l.a, b: l.b, c: l.c}
-      )
-      |> Adjust.RepoFoo.stream()
-      |> Stream.map(&parse_line/1)
-      |> CSV.encode()
-      |> Enum.into(File.stream!(path, [:write, :utf8]))
-    end)
-
+    exp = "  COPY source TO '" <> @path1 <> "\\data_exp.csv ' DELIMITER ',' ;"
+    res = Ecto.Adapters.SQL.query!(Adjust.RepoFoo, exp, [])
     # C:\\
-    qry = "COPY dest FROM 'C:\\mylog\\data.csv' DELIMITERS ',' CSV QUOTE '''';"
+    qry = "COPY dest FROM '" <> path <> "' DELIMITERS ',' CSV QUOTE '''';"
     # a
     res = Ecto.Adapters.SQL.query!(Adjust.RepoBar, qry, [])
     res
