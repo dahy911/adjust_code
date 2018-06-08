@@ -25,13 +25,14 @@ defmodule Adjust.Routes do
     # data =
     # ("Hello World Dahy!" <> File.read!("users.csv"))
 
-    Adjust.Query.get_Source()
+    Adjust.Query.get_Dest()
+    path = @path1 <> "\\data_dest.csv"
 
     conn
     |> put_resp_header("content-type", "application/json")
     |> put_resp_content_type("text/csv")
     # |> send_chunked(200)
-    |> send_resp(200, File.read!(@path1 <> "\\data_src.csv"))
+    |> send_resp(200, File.read!(path))
 
     #    conn
     #    |> put_resp_header("content-type", "application/json")
